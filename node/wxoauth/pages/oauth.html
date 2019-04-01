@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/static/css/fdxy.min.css" rel="stylesheet" style="text/css">
+    </head>
+
+    <body>
+        <div class="full-container">
+            <div class="grid-x" style="margin-top:1.2rem;">
+                <div class="cell medium-2 large-3"></div>
+                <div class="cell small-12 medium-8 large-6" style="padding-left:0.4rem;padding-right:0.4rem;">
+                    <div>
+                        <img src="<%= user.headimgurl %>" style="max-width:80%;height:auto;">
+                    </div>
+                    <p>
+                        <%= user.nickname %>
+                        <br>
+                        
+                        <%= user.country %>
+                        <br>
+
+                        <%= user.province %>
+                        <br>
+
+                        <%= user.city %>
+                    </p>
+                    <p>
+                    <p>OpenID: <%= user.openid%></p>
+                    我在后台获取了你的openid，在正常运营的系统上，已经可以通过openid作为第三方登录。
+                    而这种情况仅发生在用户使用微信客户端的场景下，如果是PC端的页面，用户可以使用微信扫码登录，
+                    这种场景需要申请<strong>微信开放平台</strong>的帐号，并且要注册网站APP并认证通过。
+                    </p>
+                    <p>
+
+                        这是一个微信授权登录测试页面（Oauth协议）。
+                        当你看到自己的头像、昵称等信息，说明调用成功。
+                        看似简单的情况，经历了一个比较复杂的过程：
+
+                        <p>1. 点击菜单跳转链接。此链接会重定向到获取微信登录授权码页面。</p>
+
+                        <p>2. 此页面会询问你是否同意，如果你近期授权过则不会询问。(在测试号上并没有显示询问页面)</p>
+
+                        <p>3. 用户同意后会生成授权码并跳转到开发者设置的URL。</p>
+
+                        <p>4. 跳转到URL 后会根据授权码以及其他参数获取access_token。</p>
+                        
+                        <p>5. 根据access_token获取用户信息。</p>
+                    </p>
+                    
+                </div>
+
+                <div class="cell medium-2 large-3"></div>
+            </div>
+        </div>
+    </body>
+</html>
+
