@@ -1,0 +1,16 @@
+/* pages/home/home.wxss */
+
+.home-container{
+  width: 700rpx;
+  padding-left: 45rpx;
+  padding-right: 45rpx;
+  margin-top: 10rpx;
+}
+
+.home-align-center{
+  text-align: center;
+}
+
+.home-button{
+  max-width: 550rpx;
+}

@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/submit/submit"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#80FFFF",
+    "navigationBarTitleText": "小程序开发",
+    "navigationBarTextStyle": "black"
+  }
+}

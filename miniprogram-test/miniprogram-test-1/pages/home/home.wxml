@@ -1,0 +1,101 @@
+<!--pages/home/home.wxml-->
+<view>
+  <text>{{batteryInfo}}</text>
+</view>
+
+<view>
+  <text>{{sys.brand}}-{{sys.model}}</text>
+</view>
+
+<view>
+  <text>{{sys.system}}</text>
+</view>
+
+
+<view class='hoem-align-center'>
+  <form bindsubmit='goIndex'>
+    <button form-type='submit' class='home-button'>
+      Index
+    </button>
+  </form>  
+</view>
+
+
+<view class='hoem-align-center'>
+  <form bindsubmit='goIndex2'>
+    <button form-type='submit' class='home-button'>
+      logs  查看重启日志
+    </button>
+  </form>  
+</view>
+
+<view  style='text-align:center'>
+   <image src="images/img-01.jpg" mode='aspectPit'></image> 
+</view>
+ 
+ <view class='' style='top:45%;'> 
+  <form bindsubmit='AskSubmit'>
+    <view >
+      <input type='text' bindinput="setKeyword" class='input-field'
+        placeholder='请输入关键字' name='keywords' value='{{keywords}} '/>
+    </view>
+    <view style='margin-top:8%;'>
+      <view class='' style="width:95%">
+        <button form-type='submit' class='submint-btn'>
+          Submit
+        </button>
+      </view>
+    </view>
+  </form>
+  
+   <!-- <form bindsubmit='goIndex1'>
+    <button form-type='submit' class='home-button-1'>
+      Submit1
+    </button> 
+  </form>   -->
+
+  <view>
+    <view>
+      <button bindtap='chooseImage'>选择图片</button>
+      <view wx:for="{{images}}" class='container'>
+        <image src='{{item}}' mode='widthFix'></image>
+      </view>
+    </view>
+  </view>
+
+  <view>
+    <camera flash='off' 
+            binderror='error' 
+            style='width:100%;height:500rpx;'>
+      <cover-view style='padding:4rpx;'>
+        <cover-view 
+          style='border:solid  0.1rem #348980;height:520rpx'>
+        </cover-view> 
+      </cover-view>
+    </camera>
+    <button  type='primary' bindtap='takePhoto'>拍照</button>
+    <view>预览</view>
+    <image  mode='widthFix' src='{{photoImg}}'></image>
+
+  </view>
+<!-- 
+  <camera flash='off' 
+          binderror='error
+          style='width:100%;height:480rpx;'>
+    <cover-view style='padding:4rpx;'>
+      <cover-view 
+          style='border:solid  0.1rem #348980;height:465rpx'>
+        </cover-view> 
+      </cover-view>
+  </camera> -->
+
+    <!-- <camera flash='off' 
+          binderror='error
+          style='width:100%;height:480rpx;'>
+      <cover-view style='padding:4rpx;'>
+        <cover-image src='cover-image.png'></cover-image>
+      </cover-view>
+  </camera> -->
+
+
+</view>

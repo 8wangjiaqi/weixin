@@ -1,0 +1,8 @@
+<!--pages/submit/submit.wxml-->
+<!-- <text>pages/submit/submit.wxml</text> -->
+
+<!-- <view>
+  {{logs}}
+</view> -->
+
+<rich-text nodes='{{tech_content}}'></rich-text>
