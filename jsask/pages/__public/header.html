@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Ask</title>
+    <link rel="stylesheet" href="/static/css/fdxy651.min.css">
+    <script>
+        var wo = new function() {
+
+            this.set = function(key,val, json_seri=false) {
+                if (json_seri) {
+                    sessionStorage.setItem(key,JSON.stringify(val));
+                } else {
+                    sessionStorage.setItem(key, val);
+                }
+            };
+
+            this.get = function(key, json_seri=false) {
+                if (sessionStorage.getItem(key)===null) {
+                    return null;
+                }
+                if (json_seri) {
+                    return JSON.parse(sessionStorage.getItem(key));
+                } else {
+                    return sessionStorage.getItem(key);        
+                }
+            };
+
+            this.clear = function() {
+                sessionStorage.clear();
+            };
+
+            this.remove = function (key) {
+                sessionStorage.removeItem(key);
+            };
+
+            this.has = function (key) {
+                if (sessionStorage.getItem(key) === null) {
+                    return true;
+                }
+                return false;
+            }
+
+        };
+
+        function formatTime(fmtstr = '', tim = null) {
+            var tm = (tim===null) ? new Date() : new Date(tim);
+
+            fstr = fmtstr.toLowerCase();
+            var join_char = '-';
+            if (fstr.indexOf('.') >= 0) {
+                join_char = '.';
+            }
+
+            var default_time = `${tm.getFullYear()}${join_char}${tm.getMonth()+1}${join_char}${tm.getDate()}`;
+
+            switch (fstr) {
+                case 'y-m-d':
+                case 'y.m.d':
+                    return default_time;
+
+                case 'y-m-d-h':
+                case 'y.m.d.h':
+                    return `${default_time}${join_char}${tm.getHours()}`;
+
+                case 'y-m-d h:m:s':
+                    return `${default_time} ${tm.getHours()}:${tm.getMinutes()}:${tm.getSeconds()}`;
+                
+                case 'y-m-d-h_m_s':
+                    return `${default_time}-${tm.getHours()}_${tm.getMinutes()}_${tm.getSeconds()}`;
+
+                default:
+                    return default_time;
+            }
+
+        }
+
+        function getSelected (nod, val = true) {
+            var nlist = nod.querySelectorAll('input:checked');
+            if (nlist.length == 0) {
+                return null;
+            }
+            if (val) {
+                var val_list = [];
+                for(var i=0; i<nlist.length; i++) {
+                    val_list.push(nlist[i].value);
+                }
+                return val_list.length == 0 ? null : val_list;
+            } else {
+                return nlist.length == 0 ? null : nlist;
+            }
+        }
+
+    </script>

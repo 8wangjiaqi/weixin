@@ -1,0 +1,198 @@
+<style>
+        .editor-block {
+            border-left: solid 0.05rem #656667;
+            border-bottom: solid 0.05rem #656667;
+            /* border-top: solid 0.05rem #126567; */
+        }
+    </style>
+</head>
+<body>
+<div class="full-container">
+    <div class="grid-x" style="margin-top:0.5rem;height: 2rem;"></div>
+    <div class="grid-x" style="margin-top:1rem;">
+        <div class="cell medium-1 large-1">
+
+        </div>
+        <div class="cell small-12 medium-7 large-7" style="overflow-x: hidden;word-break: break-all;">
+            
+                <input type="text" id="content-title" placeholder="Title">
+                <input type="hidden" id="filename">
+                
+                <div id="content-editor" style="padding-left:0.2rem;padding-right:0.2rem;">
+                    <div id="editor-zone">
+                        <div id="editor-menu" ondblclick="set_fullscreen()" class="editor-menu" style="margin-bottom: 0.5rem;border-left:solid 00.05rem #a1a2a3;background:#ecedef;"></div>
+                        <div id="editor-block" class="editor-block" style="height:30rem;width:100%;"></div>
+                    </div>
+                </div>
+            
+        </div>
+        <div class="cell small-12 medium-4 large-4" style="padding-left:0.8rem;">
+            <div>
+                <div id="show-button">
+                    <input type="button" class="button small hollow success" onclick="updateContent();" value="提交">
+                </div>
+                <div>
+                    <p id="update-info"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/wangeditor.min.js"></script>
+<script>
+
+    var _filename = null;
+    var _keyword = null;
+    if (location.href.indexOf('?') > 0) {
+        var queryStr = location.href.split('?')[1];
+        var queryVal = queryStr.split('&');
+        var queryParam = {};
+        var tmp = [];
+        for(var i=0; i<queryVal.length; i++) {
+            if (queryVal[i].indexOf('=') < 0) {
+                continue;
+            }
+            tmp = queryVal[i].split('=');
+            queryParam[tmp[0]] = tmp[1];
+        }
+        if (queryParam['filename']) {
+            _filename = queryParam['filename'];
+        }
+        if (queryParam['keyword']) {
+            _keyword = queryParam['keyword'];
+        }
+    }
+
+    if (!_filename || !_keyword) {
+        document.body.innerHTML = 'Error: Url less argument: filename=...&keyword=...';
+    }
+
+    if (wo.get('edit-init-flag')) {
+        wo.set('edit-init-flag', '0');
+        wo.set('edit-content', '');
+        wo.set('edit-id', '');
+    }
+
+    function set_fullscreen() {
+        var ez = document.querySelector('#editor-zone');
+        var eblock  = document.querySelector('#editor-block');
+        if (ez.style.cssText.length > 0) {
+            ez.style.cssText = '';
+            eblock.style.cssText = 'height:32rem;width:100%;';
+        } else {
+            ez.style.cssText = `
+                width:98%;
+                height:90%;
+                left : 1%;
+                top: 0;
+                position:fixed;
+                z-index:100;
+                background-color: #f9f9f9;
+                color: #4a4a4a;
+            `;
+            eblock.style.cssText = 'height:100%;width:100%;';
+        }
+    }
+
+    var E = window.wangEditor;
+    var editor = new E('#editor-menu', '#editor-block');
+    editor.customConfig.uploadImgMaxLength = 1;
+    editor.customConfig.zIndex = 0;
+    editor.customConfig.onchangeTimeout  = 1500;
+
+    editor.customConfig.onchange= function(html) {
+        wo.set('edit-content', getFormData(), true);
+        wo.set('edit-init-flag', parseInt(wo.get('edit-init-flag'))+1);
+    }
+
+    editor.customConfig.menus = [
+        'head',  // 标题
+        'bold',  // 粗体
+        'fontSize',  // 字号
+        'fontName',  // 字体
+        'italic',  // 斜体
+        'underline',  // 下划线
+        'strikeThrough',  // 删除线
+        'foreColor',  // 文字颜色
+        'backColor',  // 背景颜色
+        'link',  // 插入链接
+        'list',  // 列表
+        'justify',  // 对齐方式
+        'quote',  // 引用
+        //'image',  // 插入图片
+        'table',  // 表格
+        'code',  // 插入代码
+        'undo',  // 撤销
+        'redo'  // 重复
+    ];
+    editor.create();
+
+    var _titleDom = document.getElementById('content-title');
+    var _updiDom = document.getElementById('update-info');
+    var _filenameDom = document.getElementById('filename');
+
+    function getFormData () {
+        return {
+            keyword : _titleDom.value.trim(),
+            content : editor.txt.html(),
+            filename : _filenameDom.value
+        };
+    }
+
+    function updateContent() {
+        var content = getFormData();
+        fetch(`/submit`, {
+            method : 'PUT',
+            mode : 'cors',
+            headers : {
+                'content-type' : 'text/plain'
+            },
+            body : JSON.stringify(content)
+        })
+        .then(res => {
+            return res.json();
+        }, err => {
+            throw err;
+        })
+        .then(ret => {
+            _updiDom.innerHTML = ret.errmsg;
+            
+        })
+        .catch(err => {
+            
+        });
+    }
+
+
+    window.onpageshow = async function() {
+        if (wo.get('edit-init-flag') 
+            && wo.get('edit-content')
+            && (wo.get('edit-id') == _keyword+_filename)
+        
+        ) {
+            var c = JSON.parse(wo.get('edit-content'));
+            _titleDom.value = c.keyword;
+            editor.txt.html(c.content);
+        } else {
+            fetch(`/query?keyword=${encodeURIComponent(_keyword)}&filename=${encodeURIComponent(_filename)}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('failed get data');
+                }
+                return res.text();
+            }, err => {
+                throw err;
+            })
+            .then(data => {
+                _titleDom.value = _keyword;
+                editor.txt.html(data);
+                _filenameDom.value = _filename;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+        }
+
+    };
+
+</script>

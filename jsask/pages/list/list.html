@@ -1,0 +1,108 @@
+<style>
+    .head-menu {
+        color : #727272;
+    }
+    .content-search-block {
+        z-index:999;
+        position:fixed;
+        overflow-x:hidden;
+    }
+
+    .content-search-btn {
+        width:3rem;
+        height:3rem;
+        border-radius: 1.5rem;
+        background-color: #428973;
+        left:0.8rem;
+        bottom:0.5rem;
+        line-height: 3rem;
+        text-align: center;
+    }
+    .content-search-content {
+        left: 10%;
+        top: 3%;
+        width: 80%;
+        height: 80%;
+        overflow-y: auto;
+        background-color: #f1f2f3;
+    }
+</style>
+
+
+</head>
+<body>
+<div class="full-container">
+    <div class="grid-x">
+        <div class="cell medium-2 large-3"></div>
+        <div class="cell small-12 medium-8 large-6">
+            <div id="content-list" style="padding-left:0.5rem;padding-right:0.5rem;"></div>
+        </div>
+        <div class="cell medium-2 large-3"></div>
+    </div>
+</div>
+
+<script>
+
+    var _clistDom = document.getElementById('content-list');
+
+    if (!wo.get('content-list-init')) {
+        wo.set('content-list-init', '1');
+        wo.set('content-list-kwd', '');
+        wo.set('content-list-page', '1');
+    }
+
+    async function getContentList() {
+        var page = wo.get('content-list-page');
+        page = parseInt(page);
+        fetch(`/list?page=${page}`, {
+
+        })
+        .then(res => {
+            return res.json();
+        }, err => {
+            throw err;
+        })
+        .then(r => {
+            console.log(r);
+            showContentList(r.list);
+        })
+        .catch(err => {
+
+        });
+    }
+
+    async function showContentList(li) {
+        var html = '';
+        var list_text = '';
+        for(var k in li) {
+            list_text = '';
+            for(let i in li[k]) {
+                list_text += `
+                    <div style="padding:0.5rem;margin-top:0.5rem;max-height:10rem;overflow-y:hidden;word-break:break-all;border-left:solid 0.05rem #acacac;">
+                    <a href="/page/edit?filename=${encodeURIComponent(i)}&keyword=${encodeURIComponent(k)}" style="color:#232425;">
+                    <pre>${li[k][i]}</pre>
+                    </a>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="grid-x" style="margin-top:0.6rem;">
+                    <div class="cell small-12">
+                        <h2>${k}</h2>
+                        <div>
+                            ${list_text}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        _clistDom.innerHTML = html;
+    }
+
+    window.onpageshow = function() {
+
+        getContentList();
+
+    };
+</script>
